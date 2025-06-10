@@ -2,6 +2,12 @@ import tensorflow as tf
 import numpy as np
 import os
 
+def load_model():
+    with open('./model/fashion_mnist_structure.json') as f:
+        model = tf.keras.models.model_from_json(f.read())
+    model.load_weights('./model/fashion_mnist_weights.h5')
+    return model
+
 # 載入資料
 (x_train, y_train), (x_test, y_test) = tf.keras.datasets.fashion_mnist.load_data()
 x_train, x_test = x_train / 255.0, x_test / 255.0
