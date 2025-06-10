@@ -4,9 +4,8 @@ def relu(x):
     return np.maximum(0, np.array(x))
 
 def softmax(x):
-    x = np.array(x)
-    x = x - np.max(x, axis=-1, keepdims=True)
-    exp_x = np.exp(x)
+    shifted_x = x - np.max(x, axis=-1, keepdims=True)  # 確保處理多維輸入
+    exp_x = np.exp(shifted_x)
     return exp_x / np.sum(exp_x, axis=-1, keepdims=True)
 
 # === Flatten ===
@@ -42,5 +41,16 @@ def nn_forward_h5(model_arch, weights, data):
 
 
 # You are free to replace nn_forward_h5() with your own implementation 
-def nn_inference(model_arch, weights, data):
-    return nn_forward_h5(model_arch, weights, data)
+def nn_inference(model_arch, weights, img):
+    layers = model_arch['config']['layers']
+    x = img.copy()
+    
+    for i, layer in enumerate(layers[1:]):  
+        w = weights[f'arr_{i*2}']
+        b = weights[f'arr_{i*2+1}']
+        x = np.dot(x, w) + b
+        if layer['config']['activation'] == 'relu':
+            x = relu(x)
+        elif layer['config']['activation'] == 'softmax':
+            x = softmax(x)
+    return x

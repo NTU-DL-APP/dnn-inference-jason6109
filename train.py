@@ -25,4 +25,4 @@ model.fit(x_train, y_train, epochs=20, batch_size=256)
 os.makedirs('./model', exist_ok=True)
 with open('./model/fashion_mnist.json', 'w') as f:
     f.write(model.to_json())
-np.savez('./model/fashion_mnist.npz', *model.get_weights())  
+np.savez('./model/fashion_mnist.npz', *model.get_weights())
