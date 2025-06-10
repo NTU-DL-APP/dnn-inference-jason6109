@@ -43,14 +43,20 @@ def nn_forward_h5(model_arch, weights, data):
 # You are free to replace nn_forward_h5() with your own implementation 
 def nn_inference(model_arch, weights, img):
     layers = model_arch['config']['layers']
-    x = img.copy()
+    x = img.reshape(1, -1)  # 確保輸入為二維陣列
     
-    for i, layer in enumerate(layers[1:]):  
+    # 跳過 InputLayer 和 Flatten 層
+    dense_layers = [layer for layer in layers if layer['class_name'] == 'Dense']
+    
+    for i, layer in enumerate(dense_layers):
         w = weights[f'arr_{i*2}']
         b = weights[f'arr_{i*2+1}']
         x = np.dot(x, w) + b
-        if layer['config']['activation'] == 'relu':
+        
+        activation = layer['config']['activation']
+        if activation == 'relu':
             x = relu(x)
-        elif layer['config']['activation'] == 'softmax':
+        elif activation == 'softmax':
             x = softmax(x)
+            
     return x
